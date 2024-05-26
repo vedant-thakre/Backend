@@ -71,6 +71,18 @@ export const registerUser = asyncHandler(async (req, res) => {
 export const loginUser = asyncHandler(async (req, res) => {
     const { username , email, password } = req.body;
 
-    const findUser = await User.find({ email });
-})
+    if(!username && !email) throw new ErrorHandler(400, "Username or Email is Required");
+    
+    let findUser;
+    if(username){
+        findUser = await User.find({ username });
+    }else if(email){
+        findUser = await User.find({ email });
+    }
+
+    const isMatch = User.isPasswordCorrect(password);
+
+    if(!isMatch) throw new ErrorHandler(400, "Incorrect Password");
+
+});
 
