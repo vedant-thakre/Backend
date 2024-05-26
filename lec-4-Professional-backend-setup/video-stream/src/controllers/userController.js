@@ -67,3 +67,10 @@ export const registerUser = asyncHandler(async (req, res) => {
     .json(new Response(200, createdUser, "User registered Successfully"));
 });
 
+// login a user 
+export const loginUser = asyncHandler(async (req, res) => {
+    const { username , email, password } = req.body;
+
+    const findUser = await User.find({ email });
+})
+
