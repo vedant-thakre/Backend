@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ErrorHandler } from "../utils/errorHandler.js";
 import { uploadFile } from "../utils/fileHandler.js";
 import { Response } from "../utils/responseHandler.js";
+import { generateRefreshAndAccessToken } from "../utils/tokenGenerate.js";
 
 // Register a user
 export const registerUser = asyncHandler(async (req, res) => {
@@ -73,16 +74,35 @@ export const loginUser = asyncHandler(async (req, res) => {
 
     if(!username && !email) throw new ErrorHandler(400, "Username or Email is Required");
     
-    let findUser;
-    if(username){
-        findUser = await User.find({ username });
-    }else if(email){
-        findUser = await User.find({ email });
-    }
+    const findUser =  await User.findOne({ 
+        $or : [ {username}, {email}]
+    });
 
-    const isMatch = User.isPasswordCorrect(password);
+    if (!findUser) throw new ErrorHandler(404, "User not Found");
 
-    if(!isMatch) throw new ErrorHandler(400, "Incorrect Password");
+    const isMatch = await findUser.isPasswordCorrect(password);
 
+    if(!isMatch) throw new ErrorHandler(404, "Incorrect Password");
+
+    const { refreshToken, accessToken} = await generateRefreshAndAccessToken(findUser._id);
+
+    const loggedInUser = await User.findById(findUser._id).select(
+      "-password -refreshToken ");
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }  
+    
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+        new Response(200, {
+            user: loggedInUser, accessToken, refreshToken
+        }, 
+        "User registered Successfully")
+      );
 });
 
