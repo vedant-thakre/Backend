@@ -4,8 +4,10 @@ import { ErrorHandler } from "./errorHandler.js"
 export const generateRefreshAndAccessToken = async (userId) => {
     try {
         const user = await User.findById(userId);
-        const accessToken = await user.generateAccessToken();
-        const refreshToken = await user.generateRefreshToken();
+        const accessToken =  user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+
+        // console.log("Tokens", refreshToken, accessToken);
 
         user.refreshToken = refreshToken;
 
