@@ -1,12 +1,11 @@
 import express from 'express';
-import { editUserDetails, getUserDetails, loginUser, logoutUser, refreshAccessToken, registerUser } from '../controllers/userController.js';
+import { editUserDetails, getUserDetails, loginUser, logoutUser, refreshAccessToken, registerUser, updateAvatar, updateCoverImage } from '../controllers/userController.js';
 import { upload } from '../middlewares/multerMiddleware.js';
 import { verifyJwt } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
 // router.route("/register").post(registerUser);
-
 router.post(
   "/register",
   upload.fields([
@@ -28,6 +27,8 @@ router.post("/logout", verifyJwt, logoutUser);
 router.post("/refresh-token", refreshAccessToken);
 router.get("/profile", verifyJwt, getUserDetails);
 router.put("/edit-profile", verifyJwt, editUserDetails);
+router.post("/edit-avatar", verifyJwt, updateAvatar);
+router.post("/edit-cover-image", verifyJwt, updateCoverImage);
 
 
 
