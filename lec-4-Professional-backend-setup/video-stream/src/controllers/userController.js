@@ -167,3 +167,22 @@ export const refreshAccessToken = asyncHandler(async(req, res) => {
     }
 
 });
+
+export const changePassword = asyncHandler(async (req, res) => {
+
+});
+
+export const getUserDetails = asyncHandler(async (req, res) => {
+
+});
+
+export const editUserDetails = asyncHandler(async (req, res) => {
+
+});
+
+export const updateCoverImage = asyncHandler(async (req, res) => {
+
+});
+export const updateAvatar = asyncHandler(async (req, res) => {
+
+});
