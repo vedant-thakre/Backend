@@ -27,8 +27,8 @@ router.post("/logout", verifyJwt, logoutUser);
 router.post("/refresh-token", refreshAccessToken);
 router.get("/profile", verifyJwt, getUserDetails);
 router.put("/edit-profile", verifyJwt, editUserDetails);
-router.post("/edit-avatar", verifyJwt, updateAvatar);
-router.post("/edit-cover-image", verifyJwt, updateCoverImage);
+router.post("/edit-avatar", verifyJwt, upload.single("avatar"), updateAvatar);
+router.post("/edit-cover-image", verifyJwt, upload.single("coverImage"), updateCoverImage);
 
 
 

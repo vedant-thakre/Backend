@@ -169,20 +169,102 @@ export const refreshAccessToken = asyncHandler(async(req, res) => {
 });
 
 export const changePassword = asyncHandler(async (req, res) => {
+    const { oldPassword , newPassword } = req.body;
+    
+    const user = await User.findById(req.user?._id);
 
+    if(!user) throw new ErrorHandler(404, "User not Found");
+
+    const isMatch = user.isPasswordCorrect(oldPassword);
+
+    if(!isMatch) throw new ErrorHandler(404, "Password does not match");
+
+    user.password = newPassword;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(200).json( new Response(200, "Password Updated Successfully"));
 });
 
 export const getUserDetails = asyncHandler(async (req, res) => {
-
+    const user = await User.findById(req.user?._id).select("-password")
+  
+    return res
+      .status(200)
+      .json(new Response(200, req.user, "User fetched successfully"));
 });
 
 export const editUserDetails = asyncHandler(async (req, res) => {
+    const { username, fullName, email } = req.body;
 
+    const user = await User.findByIdAndUpdate(
+      req.user?._id,
+      {
+        $set: {
+          username,
+          fullName,
+          email
+        }
+      },
+      {
+        new : true,
+      }
+    ).select("-password");
+
+    return res
+      .status(200)
+      .json(new Response(200, user, "Account details updated successfully"));
 });
 
 export const updateCoverImage = asyncHandler(async (req, res) => {
+  console.log(req.file);
+
+  const coverImageLocalPath = req.file?.path;
+
+  if(!coverImageLocalPath) throw new ErrorHandler(400, "Cover image file is missing")
+
+  const newCoverImage = await uploadFile(coverImageLocalPath);
+
+  if (!newCoverImage.url) {
+    throw new ErrorHandler(400, "Error while uploading on cover image");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      coverImage: newCoverImage.url,
+    },
+    {
+      new: true,
+    }
+  ).select("-password");
+
+  return res
+    .status(200)
+    .json(new Response(200, user, "Cover image updated successfully"));
 
 });
 export const updateAvatar = asyncHandler(async (req, res) => {
+  const avatarLocalPath = req.file?.path;
 
+  if (!avatarLocalPath) throw new ErrorHandler(400, "Avatar file is missing");
+
+  const newAvatar = await uploadFile(avatarLocalPath);
+
+  if (!newAvatar.url) {
+    throw new ErrorHandler(400, "Error while uploading on avatar");
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      avatar: newAvatar.url,
+    },
+    {
+      new: true,
+    }
+  ).select("-password");
+
+  return res
+    .status(200)
+    .json(new Response(200, user, "Avatar updated successfully"));
 });
