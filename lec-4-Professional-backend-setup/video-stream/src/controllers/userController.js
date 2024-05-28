@@ -185,9 +185,7 @@ export const changePassword = asyncHandler(async (req, res) => {
     return res.status(200).json( new Response(200, "Password Updated Successfully"));
 });
 
-export const getUserDetails = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user?._id).select("-password")
-  
+export const getUserDetails = asyncHandler(async (req, res) => {  
     return res
       .status(200)
       .json(new Response(200, req.user, "User fetched successfully"));
@@ -195,6 +193,10 @@ export const getUserDetails = asyncHandler(async (req, res) => {
 
 export const editUserDetails = asyncHandler(async (req, res) => {
     const { username, fullName, email } = req.body;
+
+     if (!fullName || !email || !username) {
+       throw new ErrorHandler(400, "All fields are required");
+     }
 
     const user = await User.findByIdAndUpdate(
       req.user?._id,
