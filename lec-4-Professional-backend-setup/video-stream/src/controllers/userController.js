@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { User } from "../models/userModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ErrorHandler } from "../utils/errorHandler.js";
@@ -339,4 +340,68 @@ export const getUserChannelProfile = asyncHandler(async (req, res) => {
     .status(200)
     .json(new Response(200, channel, "Channel fetched successfuly"))
 
-})
+});
+
+export const getUserWatchHistory = asyncHandler(async(req, res) => {
+    const user = await User.aggregate([
+      {
+        /*
+          You cannot write like this because all the aggregation pipeline code 
+          goes directly and not through mongoose so and if write like below it 
+          work becase if look in mongodb how the document is stored you will find
+          number are stored as number string as string but the _id is stored like
+          ObjectId('66522b25000f79f0fd91da2d') like this so we need to match the 
+          id like this in order match the id.
+
+          $match: {
+            _id: req.user?._id
+          }
+        */
+      },
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(req.user?._id),
+        },
+      },
+      {
+        $lookup: {
+          from: "videos",
+          localField: "watchHistory",
+          foreignField: "_id",
+          as: "watchHistory",
+          pipeline: [
+            {
+              $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline: [
+                  {
+                    $project: {
+                      fullName: 1,
+                      username: 1,
+                      avatar: 1,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $addFields: {
+                owner: {
+                  $first: "$owner",
+                },
+              },
+            },
+          ],
+        },
+      },
+    ]);
+
+    return res
+    .status(200)
+    .json(
+      new Response(200, user[0].watchHistory, "Watch history fetched successfully")
+    )
+});
