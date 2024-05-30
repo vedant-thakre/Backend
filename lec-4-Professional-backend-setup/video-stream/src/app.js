@@ -1,4 +1,4 @@
-// imporging packages
+// importing packages
 import express from 'express';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from './routes/userRoutes.js';
 import subscriptionRoutes from "./routes/subscriptionRoutes.js";
 import tweetRoutes from "./routes/tweetRoutes.js";
+import commentRoutes from "./routes/commentRoutes.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/subscription", subscriptionRoutes);
 app.use("/api/v1/tweets", tweetRoutes);
+app.use("/api/v1/comments", commentRoutes);
 
 
 export { app };

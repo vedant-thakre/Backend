@@ -14,10 +14,12 @@ const commentSchema = new mongoose.Schema(
     video: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Video",
+      default: null,
     },
     tweet: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Tweet",
+      default: null,
     },
   },
   {
