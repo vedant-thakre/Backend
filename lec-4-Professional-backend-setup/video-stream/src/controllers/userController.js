@@ -405,3 +405,13 @@ export const getUserWatchHistory = asyncHandler(async(req, res) => {
       new Response(200, user[0].watchHistory, "Watch history fetched successfully")
     )
 });
+
+
+export const getAllUsers = asyncHandler(async (req, res) => {
+
+  const userlist = await User.find();
+
+  return res
+    .status(200)
+    .json(new Response(200, userlist, "User list fetched sucessfully"));
+});

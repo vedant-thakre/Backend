@@ -6,11 +6,31 @@ import { Response } from "../utils/responseHandler.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const createTweet = asyncHandler(async (req, res) => {
-  //TODO: create tweet
+  const { content } = req.body;
+
+  if(!content) throw new ErrorHandler(400, "Cannot send empty tweet");
+
+  const tweet = await Tweet.create({
+    content,
+    owner: req.user?._id,
+  })
+
+  if (!tweet) throw new ErrorHandler(400, "Error in creating tweet");
+
+  return res
+  .status(200)
+  .json(
+    new Response(200, tweet, "Tweet created Successfully")
+  )
+
 });
 
 export const getUserTweets = asyncHandler(async (req, res) => {
-  // TODO: get user tweets
+   const allTweets = await Tweet.find({
+      $match: {
+        owner: req.user?._id
+      }
+   })
 });
 
 export const updateTweet = asyncHandler(async (req, res) => {

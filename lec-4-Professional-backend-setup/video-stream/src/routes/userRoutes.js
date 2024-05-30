@@ -1,5 +1,5 @@
 import express from 'express';
-import { changePassword, editUserDetails, getUserChannelProfile, getUserDetails, getUserWatchHistory, loginUser, logoutUser, refreshAccessToken, registerUser, updateAvatar, updateCoverImage } from '../controllers/userController.js';
+import { changePassword, editUserDetails, getAllUsers, getUserChannelProfile, getUserDetails, getUserWatchHistory, loginUser, logoutUser, refreshAccessToken, registerUser, updateAvatar, updateCoverImage } from '../controllers/userController.js';
 import { upload } from '../middlewares/multerMiddleware.js';
 import { verifyJwt } from '../middlewares/authMiddleware.js';
 
@@ -32,6 +32,10 @@ router.patch("/edit-avatar", verifyJwt, upload.single("avatar"), updateAvatar);
 router.patch("/edit-cover-image", verifyJwt, upload.single("coverImage"), updateCoverImage);
 router.get("/channel/:username", verifyJwt, getUserChannelProfile);
 router.get("/history", verifyJwt, getUserWatchHistory);
+
+// dev routes.
+router.get("/dev/test/getalluser", getAllUsers);
+
 
 
 export default router;
