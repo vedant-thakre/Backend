@@ -5,7 +5,8 @@ import cookieParser from "cookie-parser";
 
 // importing Routes
 import userRoutes from './routes/userRoutes.js';
-import subscriptionRoutes from "./routes/subscriptionRoutes.js"
+import subscriptionRoutes from "./routes/subscriptionRoutes.js";
+import tweetRoutes from "./routes/tweetRoutes.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(cookieParser());
 // routes
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/subscription", subscriptionRoutes);
+app.use("/api/v1/tweets", tweetRoutes);
 
 
 export { app };
