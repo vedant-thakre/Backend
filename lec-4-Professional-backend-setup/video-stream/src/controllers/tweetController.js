@@ -69,3 +69,68 @@ export const deleteTweet = asyncHandler(async (req, res) => {
     .json(new Response(200, tweet, "Tweet Deleted Successfully"));
 });
 
+export const getTweetById = asyncHandler(async(req, res) => {
+  const{ tweetId } = req.params;
+
+  const tweet = await Tweet.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(tweetId),
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "user",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              avatar: 1,
+              username: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: "$user",
+    },
+    {
+      $lookup: {
+        from: "comments",
+        localField: "_id",
+        foreignField: "tweet",
+        as: "comments",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "userInfo",
+              pipeline: [
+                {
+                  $project: {
+                    fullName: 1,
+                    avatar: 1,
+                    username: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $unwind: "$userInfo",
+          },
+        ],
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(new Response(200, tweet, "Tweet fetched Successfully"));
+});

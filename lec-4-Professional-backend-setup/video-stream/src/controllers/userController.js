@@ -130,6 +130,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .json(new Response(200, {}, "User Logged Out"));
 });
 
+// refresh the toke
 export const refreshAccessToken = asyncHandler(async(req, res) => {
     try {
         const token = req.body.accessToken || req.cookies.accessToken;
@@ -169,6 +170,7 @@ export const refreshAccessToken = asyncHandler(async(req, res) => {
 
 });
 
+// changing password
 export const changePassword = asyncHandler(async (req, res) => {
     const { oldPassword , newPassword } = req.body;
     
@@ -186,12 +188,14 @@ export const changePassword = asyncHandler(async (req, res) => {
     return res.status(200).json( new Response(200, "Password Updated Successfully"));
 });
 
+// getting user details
 export const getUserDetails = asyncHandler(async (req, res) => {  
     return res
       .status(200)
       .json(new Response(200, req.user, "User fetched successfully"));
 });
 
+// updating user details
 export const editUserDetails = asyncHandler(async (req, res) => {
     const { username, fullName, email } = req.body;
 
@@ -218,6 +222,7 @@ export const editUserDetails = asyncHandler(async (req, res) => {
       .json(new Response(200, user, "Account details updated successfully"));
 });
 
+// updating cover image
 export const updateCoverImage = asyncHandler(async (req, res) => {
   console.log(req.file);
 
@@ -246,6 +251,8 @@ export const updateCoverImage = asyncHandler(async (req, res) => {
     .json(new Response(200, user, "Cover image updated successfully"));
 
 });
+
+// updating avatar image
 export const updateAvatar = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path;
 
@@ -272,63 +279,70 @@ export const updateAvatar = asyncHandler(async (req, res) => {
     .json(new Response(200, user, "Avatar updated successfully"));
 });
 
+// get channel profile
 export const getUserChannelProfile = asyncHandler(async (req, res) => {
     const { username } = req.params;
+
+    console.log(username);
 
     if(!username){
       throw new ErrorHandler(400, "Username is missing");
     }
 
-    const channel = await User.aggregate[
-        ({
-          $match: {
-            username: username?.toLowerCase(),
-          },
+    const channel = await User.aggregate([
+      {
+        $match: {
+          username: username,
         },
-        {
-          $lookup: {
-            from: "subscriptions",
-            localField: "_id",
-            foreignField: "channel",
-            as: "subscribers",
-          },
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "channel",
+          as: "subscribers",
         },
-        {
-          $lookup: {
-            from: "subscriptions",
-            localField: "_id",
-            foreignField: "subscriber",
-            as: "subscribedTo",
-          },
+      },
+      {
+        $lookup: {
+          from: "subscriptions",
+          localField: "_id",
+          foreignField: "subscriber",
+          as: "subscribedTo",
         },
-        {
-          $addFields: {
-            subscribersCount: {
-              $size: "$subscribers",
+      },
+      {
+        $addFields: {
+          subscribersCount: {
+            $size: "$subscribers",
+          },
+          channelsSubscribedToCount: {
+            $size: "$subscribedTo",
+          },
+          isSubscribed: {
+            $cond: {
+              if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+              then: true,
+              else: false,
             },
-            channelsSubscribedToCount: {
-              $size: "$subscribedTo",
-            },
-            isSubscribed: {
-              if: {$in : [ req.user?._id, "$subscribers.subscriber"]},
-              then : true,
-              else : false
-            }
           },
         },
-        {
-          $project: {
-            fullName: 1,
-            username: 1,
-            email: 1,
-            avatar: 1,
-            coverImage: 1,
-            subscribersCount: 1,
-            channelsSubscribedToCount: 1,
-            isSubscribed: 1
-          }
-        })
-    ];
+      },
+      {
+        $project: {
+          fullName: 1,
+          username: 1,
+          email: 1,
+          avatar: 1,
+          coverImage: 1,
+          subscribersCount: 1,
+          channelsSubscribedToCount: 1,
+          isSubscribed: 1,
+        },
+      },
+    ]);
+
+    console.log(channel);
 
     if(!channel?.length){
       throw new ErrorHandler(400, "Channel does not exist");
@@ -342,6 +356,7 @@ export const getUserChannelProfile = asyncHandler(async (req, res) => {
 
 });
 
+// get watch history
 export const getUserWatchHistory = asyncHandler(async(req, res) => {
     const user = await User.aggregate([
       {
@@ -406,7 +421,7 @@ export const getUserWatchHistory = asyncHandler(async(req, res) => {
     )
 });
 
-
+// get all users
 export const getAllUsers = asyncHandler(async (req, res) => {
 
   const userlist = await User.find();

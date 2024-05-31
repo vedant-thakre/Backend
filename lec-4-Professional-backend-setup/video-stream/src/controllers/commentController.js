@@ -20,7 +20,6 @@ export const getAllComments = asyncHandler(async (req, res) => {
     type = "tweet";
   }
 
-
   const allComments = await Comment.aggregate([
     {
       $match: post,
@@ -92,6 +91,7 @@ export const addComment = asyncHandler(async (req, res) => {
 
 export const updateComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
+  const { content } = req.body;
 
   const comment = await Comment.findByIdAndUpdate(
     commentId,
@@ -113,7 +113,7 @@ export const updateComment = asyncHandler(async (req, res) => {
 export const deleteComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
 
-  const comment = await Tweet.findByIdAndDelete(id);
+  const comment = await Comment.findByIdAndDelete(commentId);
 
   if (!comment) throw new ErrorHandler(400, "Error in deleting the tweet");
 
