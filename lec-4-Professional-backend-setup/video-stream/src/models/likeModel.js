@@ -6,6 +6,11 @@ const likeSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    type: {
+      type: String,
+      enum: ['like', 'dislike'],
+      required: true
+    },
     video: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Video",
