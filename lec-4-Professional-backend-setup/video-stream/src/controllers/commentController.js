@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { Comment } from "../models/commentModel.js";
+import { Tweet } from "../models/tweetModel.js";
 import { ErrorHandler } from "../utils/errorHandler.js";
 import { Response } from "../utils/responseHandler.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
