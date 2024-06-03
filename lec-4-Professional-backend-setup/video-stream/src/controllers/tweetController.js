@@ -136,7 +136,37 @@ export const getTweetById = asyncHandler(async(req, res) => {
 });
 
 export const getAllTweets = asyncHandler(async(req, res) => {
-  const tweets = await Tweet.find();
+  const tweets = await Tweet.aggregate([
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "user",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              username: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $unwind: "$user",
+    },
+    {
+      $project: {
+        _id: 1,
+        content: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        owner: "$user",
+      },
+    },
+  ]);
   return res
     .status(200)
     .json(new Response(200, tweets, "Tweets fetched Successfully"));
