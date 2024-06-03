@@ -42,8 +42,18 @@ export const getAllComments = asyncHandler(async (req, res) => {
       },
     },
     {
-      $unwind: "$userInfo"
-    }
+      $unwind: "$userInfo",
+    },
+    {
+      $project: {
+        _id: 1,
+        content: 1,
+        tweet: 1,
+        createdAt: 1,
+        updatedAt: 1,
+        owner: "$userInfo",
+      },
+    },
     // {
     //   $addFields: {
     //     userData: {
@@ -73,13 +83,21 @@ export const addComment = asyncHandler(async (req, res) => {
   if(!content) throw new ErrorHandler(404, "Comment cannot be emtpy");
 
   if(!videoId && !tweetId) throw new ErrorHandler(404, "Id is Required");
-  
-  const comment = await Comment.create({
-    content,
-    owner: req.user?._id,
-    video: videoId || null,
-    tweet: tweetId || null,
-  });
+
+  let comment;
+  if(videoId){
+    comment = await Comment.create({
+      content,
+      owner: req.user?._id,
+      video: videoId,
+    });
+  }else {
+    comment = await Comment.create({
+      content,
+      owner: req.user?._id,
+      tweet: tweetId,
+    });
+  }
 
   if (!comment) throw new ErrorHandler(404, "Error in adding comment");
 
