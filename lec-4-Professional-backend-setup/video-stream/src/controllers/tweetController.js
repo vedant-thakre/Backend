@@ -134,3 +134,10 @@ export const getTweetById = asyncHandler(async(req, res) => {
     .status(200)
     .json(new Response(200, tweet, "Tweet fetched Successfully"));
 });
+
+export const getAllTweets = asyncHandler(async(req, res) => {
+  const tweets = await Tweet.find();
+  return res
+    .status(200)
+    .json(new Response(200, tweets, "Tweets fetched Successfully"));
+})

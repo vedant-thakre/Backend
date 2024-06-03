@@ -105,7 +105,7 @@ export const loginUser = asyncHandler(async (req, res) => {
         new Response(200, {
             user: loggedInUser, accessToken, refreshToken
         }, 
-        "User registered Successfully"));
+        "User Login Successfully"));
 });
 
 // logout the user
