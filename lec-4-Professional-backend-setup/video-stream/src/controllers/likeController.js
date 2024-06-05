@@ -242,4 +242,10 @@ export const getLikedTweets = asyncHandler(async (req, res) => {
 // export const getLikedComments = asyncHandler(async (req, res) => {
 //   //TODO: get all liked videos
 // });
+// export const getLikedComments = asyncHandler(async (req, res) => {
+//   //TODO: get all liked videos
+// });
+// export const getLikedComments = asyncHandler(async (req, res) => {
+//   //TODO: get all liked videos
+// });
 
