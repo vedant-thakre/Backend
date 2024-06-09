@@ -6,9 +6,7 @@ export const generateRefreshAndAccessToken = async (userId) => {
         const user = await User.findById(userId);
         const accessToken =  user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
-
-        // console.log("Tokens", refreshToken, accessToken);
-
+        
         user.refreshToken = refreshToken;
 
         await user.save({ validateBeforeSave: false });
