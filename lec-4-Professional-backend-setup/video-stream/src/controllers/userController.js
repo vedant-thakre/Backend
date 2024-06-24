@@ -130,7 +130,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .json(new Response(200, {}, "User Logged Out"));
 });
 
-// refresh the toke
+// refresh the token
 export const refreshAccessToken = asyncHandler(async(req, res) => {
     try {
         const token = req.body.accessToken || req.cookies.accessToken;
