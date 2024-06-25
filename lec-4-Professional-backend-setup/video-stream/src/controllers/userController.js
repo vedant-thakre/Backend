@@ -423,7 +423,6 @@ export const getUserWatchHistory = asyncHandler(async(req, res) => {
 
 // get all users
 export const getAllUsers = asyncHandler(async (req, res) => {
-
   const userlist = await User.find();
 
   return res
