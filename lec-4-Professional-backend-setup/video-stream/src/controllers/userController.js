@@ -169,6 +169,44 @@ export const refreshAccessToken = asyncHandler(async(req, res) => {
     }
 
 });
+// export const refreshAccessToken = asyncHandler(async(req, res) => {
+//     try {
+//         const token = req.body.accessToken || req.cookies.accessToken;
+    
+//         if(!token){
+//             throw new ErrorHandler(401, "Anauthorized Request");
+//         }
+    
+//         const { id } = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    
+//         const user = await User.findById(id);
+    
+//         if(!user) throw new ErrorHandler(401, "Invalid Token");
+    
+//         if(token !== user.refreshToken){
+//             throw new ErrorHandler(401, "Refresh Token is Expired or Invalid");
+//         }
+    
+//         const { newRefreshToken, accessToken } = await generateRefreshAndAccessToken(
+//           user._id
+//         );
+        
+//         return res
+//           .status(200)
+//           .cookie("accessToken", accessToken, options)
+//           .cookie("refreshToken", newRefreshToken, options)
+//           .json(
+//             new Response(
+//               200,
+//               { accessToken, refreshToken:newRefreshToken },
+//               "Tokens Updated Successfully"
+//             )
+//           );
+//     } catch (error) {
+//         throw new ErrorHandler(401, error?.message || "Invalid Token")
+//     }
+
+// });
 
 // changing password
 export const changePassword = asyncHandler(async (req, res) => {
